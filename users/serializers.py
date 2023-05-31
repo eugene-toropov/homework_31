@@ -20,7 +20,7 @@ class UserListSerializer(ModelSerializer):
 
 
 class UserCreateUpdateSerializer(ModelSerializer):
-    locations = SlugRelatedField(slug_field='name', many=True, queryset=Location.objects.all())
+    locations = SlugRelatedField(slug_field='name', many=True, queryset=Location.objects.all(), required=False)
 
     class Meta:
         model = User
