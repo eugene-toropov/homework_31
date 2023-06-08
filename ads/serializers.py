@@ -1,6 +1,6 @@
 import datetime
 
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, BooleanField
 from rest_framework.relations import SlugRelatedField
 from rest_framework.serializers import ModelSerializer
 
@@ -11,17 +11,23 @@ from users.serializers import LocationSerializer
 
 class UserAdSerializer(ModelSerializer):
     locations = LocationSerializer(many=True)
-    birth_year = SerializerMethodField()
-
-    def get_birth_year(self, obj):
-        return datetime.date.today().year - obj.age
 
     class Meta:
         model = User
-        fields = ['locations', 'birth_year', 'username']
+        fields = ['locations', 'username']
 
 
 class AdSerializer(ModelSerializer):
+    class Meta:
+        model = Ad
+        fields = '__all__'
+
+
+class AdCreateSerializer(ModelSerializer):
+    category = SlugRelatedField(slug_field='name', queryset=Category.objects.all())
+    author = SlugRelatedField(slug_field='username', queryset=User.objects.all())
+    is_published = BooleanField(read_only=True)
+
     class Meta:
         model = Ad
         fields = '__all__'
@@ -64,4 +70,10 @@ class SelectionCreateSerializer(ModelSerializer):
 
     class Meta:
         model = Selection
+        fields = '__all__'
+
+
+class CategorySerializer(ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'
